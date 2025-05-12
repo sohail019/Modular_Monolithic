@@ -2,8 +2,12 @@
   "name": "modular_monolithic",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "lint": "eslint . --ext .ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,5 +21,26 @@
   "bugs": {
     "url": "https://github.com/sohail019/Modular_Monolithic/issues"
   },
-  "homepage": "https://github.com/sohail019/Modular_Monolithic#readme"
+  "homepage": "https://github.com/sohail019/Modular_Monolithic#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "express-async-errors": "^3.1.1",
+    "helmet": "^8.1.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.14.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/mongoose": "^5.11.96",
+    "@types/node": "^22.15.17",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
 }
