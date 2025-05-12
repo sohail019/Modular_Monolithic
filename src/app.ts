@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDB } from "./config/db"; // Importing database connection
 import authRoutes from "./modules/auth/auth.routes"; // Importing auth routes
 import userRoutes from "./modules/user/user.routes";
+import productRoutes from "./modules/product/product.routes";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ connectDB();
 // Use Routes
 app.use("/api/auth", authRoutes); // auth routes
 app.use("/api/users", userRoutes); // user routes
+app.use("/api/products", productRoutes); // product routes
 
 // Root endpoint
 app.get("/", (req, res) => {
