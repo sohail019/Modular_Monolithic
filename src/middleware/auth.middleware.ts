@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import * as authService from "../modules/auth/auth.service";
 
 // Extend Express Request type to include user
 declare global {
@@ -10,25 +11,37 @@ declare global {
   }
 }
 
-export const authenticate = (
+export const authenticate = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
-    console.log("Token:", token); // Log the token for debugging
+
     if (!token) {
       res.status(401).json({ message: "Authentication required" });
-      return; // Return after sending response, don't call next()
+      return;
+    }
+
+    // Check if token is revoked
+    const isRevoked = await authService.isTokenRevoked(token);
+    if (isRevoked) {
+      res.status(401).json({ message: "Token has been revoked" });
+      return;
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret");
-    console.log(decoded);
+
+    // Ensure it's an access token, not a refresh token
+    if ((decoded as any).type !== "access") {
+      res.status(401).json({ message: "Invalid token type" });
+      return;
+    }
+
     req.user = decoded;
-    next(); // Call next() to continue to the route handler
+    next();
   } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
-    // Don't call next() on error, just end the request
+    res.status(401).json({ message: "Invalid or expired token" });
   }
 };

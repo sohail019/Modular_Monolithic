@@ -23,3 +23,23 @@ export interface AuthResponse {
     permissions: string[];
   };
 }
+
+export interface RefreshTokenRequestBody {
+  refresh_token: string;
+}
+
+export interface VerifyEmailRequestBody {
+  token: string;
+}
+
+export interface TokenResponse {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+}
+
+export interface RevokedToken {
+  token: string;
+  revoked_at: Date;
+  user_id: string;
+}
