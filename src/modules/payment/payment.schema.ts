@@ -117,6 +117,7 @@ const PaymentSchema = new Schema<IPayment>(
       type: String,
       default: "",
     },
+    
     gst_amount: {
       type: Number,
       default: 0,
@@ -153,7 +154,6 @@ PaymentSchema.index({ status: 1 });
 PaymentSchema.index({ created_at: 1 });
 
 // Create Payment model
-const Payment =
-  mongoose.models.Payment || mongoose.model<IPayment>("Payment", PaymentSchema);
+const Payment = mongoose.model<IPayment>("Payment", PaymentSchema);
 
 export { Payment };
