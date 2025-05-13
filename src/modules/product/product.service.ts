@@ -24,6 +24,52 @@ export const createProduct = async (productData: CreateProductDto) => {
 };
 
 // Get all products with filtering/pagination
+// export const getAllProducts = async (query: ProductQueryParams) => {
+//   const {
+//     page = 1,
+//     limit = 10,
+//     sort = "created_at",
+//     name,
+//     min_price,
+//     max_price,
+//   } = query;
+
+//   const filter: any = {};
+
+//   // Apply filters if provided
+//   if (name) {
+//     filter.name = { $regex: name, $options: "i" };
+//   }
+
+//   if (min_price !== undefined || max_price !== undefined) {
+//     filter.price = {};
+//     if (min_price !== undefined) {
+//       filter.price.$gte = min_price;
+//     }
+//     if (max_price !== undefined) {
+//       filter.price.$lte = max_price;
+//     }
+//   }
+
+//   const sortDirection = sort.startsWith("-") ? -1 : 1;
+//   const sortField = sort.startsWith("-") ? sort.substring(1) : sort;
+
+//   const products = await Product.find(filter)
+//     .sort({ [sortField]: sortDirection })
+//     .skip((page - 1) * limit)
+//     .limit(limit);
+
+//   const total = await Product.countDocuments(filter);
+
+//   return {
+//     products,
+//     page,
+//     limit,
+//     total,
+//     pages: Math.ceil(total / limit),
+//   };
+// };
+
 export const getAllProducts = async (query: ProductQueryParams) => {
   const {
     page = 1,
@@ -54,15 +100,29 @@ export const getAllProducts = async (query: ProductQueryParams) => {
   const sortDirection = sort.startsWith("-") ? -1 : 1;
   const sortField = sort.startsWith("-") ? sort.substring(1) : sort;
 
+  // Fetch products with category and brand populated
   const products = await Product.find(filter)
+    .populate("category_id", "name slug description") // Populate category fields
+    .populate("brand_id", "name logo_url description") // Populate brand fields
     .sort({ [sortField]: sortDirection })
     .skip((page - 1) * limit)
-    .limit(limit);
+    .limit(limit)
+    .lean(); // Convert Mongoose documents to plain JavaScript objects
+
+  // Transform the result to rename fields
+  const transformedProducts = products.map((product) => {
+    const { category_id, brand_id, ...rest } = product; // Destructure to exclude category_id and brand_id
+    return {
+      ...rest,
+      category: category_id, // Rename category_id to category
+      brand: brand_id, // Rename brand_id to brand
+    };
+  });
 
   const total = await Product.countDocuments(filter);
 
   return {
-    products,
+    products: transformedProducts,
     page,
     limit,
     total,
