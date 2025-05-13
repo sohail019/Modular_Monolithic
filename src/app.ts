@@ -6,7 +6,7 @@ import authRoutes from "./modules/auth/auth.routes"; // Importing auth routes
 import userRoutes from "./modules/user/user.routes";
 import productRoutes from "./modules/product/product.routes";
 import categoryRoutes from "./modules/product/category/category.routes";
-
+import brandRoutes from "./modules/product/brand/brand.routes";
 dotenv.config();
 
 const app: Application = express();
@@ -23,7 +23,7 @@ app.use("/api/auth", authRoutes); // auth routes
 app.use("/api/users", userRoutes); // user routes
 app.use("/api/products", productRoutes); // product routes
 app.use("/api/categories", categoryRoutes); // category routes
-
+app.use("/api/brands", brandRoutes);
 // Root endpoint
 app.get("/", (req, res) => {
   res.send("Modular Monolithic Auth Server Running!");
