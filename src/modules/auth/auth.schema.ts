@@ -45,7 +45,7 @@ const Auth = model<IAuth>("Auth", authSchema);
 export interface IRevokedToken extends Document {
   token: string;
   revoked_at: Date;
-  user_id: string;
+  user_id: Schema.Types.ObjectId;
 }
 
 const revokedTokenSchema = new Schema<IRevokedToken>({
