@@ -17,13 +17,14 @@ export const authenticate = (
 ) => {
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
-
+    console.log("Token:", token); // Log the token for debugging
     if (!token) {
       res.status(401).json({ message: "Authentication required" });
       return; // Return after sending response, don't call next()
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret");
+    console.log(decoded);
     req.user = decoded;
     next(); // Call next() to continue to the route handler
   } catch (error) {
