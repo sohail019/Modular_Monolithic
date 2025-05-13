@@ -5,6 +5,7 @@ import { connectDB } from "./config/db"; // Importing database connection
 import authRoutes from "./modules/auth/auth.routes"; // Importing auth routes
 import userRoutes from "./modules/user/user.routes";
 import productRoutes from "./modules/product/product.routes";
+import categoryRoutes from "./modules/product/category/category.routes";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ connectDB();
 app.use("/api/auth", authRoutes); // auth routes
 app.use("/api/users", userRoutes); // user routes
 app.use("/api/products", productRoutes); // product routes
+app.use("/api/categories", categoryRoutes); // category routes
 
 // Root endpoint
 app.get("/", (req, res) => {
