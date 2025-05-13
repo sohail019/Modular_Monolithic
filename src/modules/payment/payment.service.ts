@@ -448,3 +448,7 @@ function formatPaymentResponse(payment: any) {
     updated_at: payment.updated_at,
   };
 }
+
+export const getPaymentsByOrderIds = async (orderIds: string[]) => {
+  return await Payment.find({ order_id: { $in: orderIds } });
+};
