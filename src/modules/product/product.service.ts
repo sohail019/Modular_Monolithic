@@ -303,3 +303,11 @@ export const searchProducts = async (
     pages: Math.ceil(total / limit),
   };
 };
+export function decreaseStock(product_id: any, quantity: any) {
+    throw new Error("Function not implemented.");
+}
+
+export function increaseStock(arg0: string, quantity: number) {
+    throw new Error("Function not implemented.");
+}
+
