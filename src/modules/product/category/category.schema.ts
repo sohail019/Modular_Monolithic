@@ -19,7 +19,7 @@ const CategorySchema = new Schema<ICategory>(
 
 // Add indexes for better query performance
 CategorySchema.index({ name: 1 });
-CategorySchema.index({ slug: 1 }, { unique: true });
+// CategorySchema.index({ slug: 1 }, { unique: true });
 
 // Export model, checking if it exists first to prevent overwrite errors
 const CategoryModel = model<ICategory>("Category", CategorySchema);

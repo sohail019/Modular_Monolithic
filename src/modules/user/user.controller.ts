@@ -6,6 +6,7 @@ import {
   UpdateAddressDto,
   UpdateProfileImageDto,
 } from "./user.types";
+import * as sharedService from "../../shared/order-payment.service";
 
 // Get current user profile
 export const getMyProfile = async (req: Request, res: Response) => {
@@ -118,10 +119,31 @@ export const updateMyProfileImage = async (req: Request, res: Response) => {
 // Get user orders
 export const getUserOrders = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const orders = await userService.getUserOrders(id);
+    const authId = req.user?.id;
+    if (!authId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+    const orders = await userService.getUserOrders(authId);
     res.status(200).json(orders);
   } catch (error) {
     res.status(404).json({ message: error.message });
+  }
+};
+
+export const getUserOrdersWithPayment = async (req: Request, res: Response) => {
+  try {
+    const authId = req.user?.id;
+    if (!authId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const result = await sharedService.getUserOrdersWithPayment(authId);
+    // Fetch user orders
+
+    res.status(200).json({ result });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
