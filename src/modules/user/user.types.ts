@@ -6,6 +6,14 @@ export interface CreateUserDto {
   full_name: string;
   phone?: string;
   date_of_birth?: Date;
+  profile_image?: string; // New field for profile image
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    postal_code: string;
+    country: string;
+  }; // New field for address
 }
 
 export interface UpdateUserDto {

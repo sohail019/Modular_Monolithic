@@ -2,14 +2,25 @@ import Auth from "./auth.schema";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AuthRequestBody } from "./auth.types";
+import { addUser } from "../../shared/user.service";
 
 const saltRounds = 10;
 
 export const createUser = async (data: AuthRequestBody) => {
-  const { email, password, login_provider } = data;
+  const {
+    email,
+    password,
+    login_provider,
+    full_name,
+    phone,
+    date_of_birth,
+    profile_image,
+    address,
+  } = data;
+
   const password_hash = await bcrypt.hash(password, saltRounds);
 
-  const user = new Auth({
+  const authUser = new Auth({
     email,
     password_hash,
     login_provider,
@@ -21,8 +32,19 @@ export const createUser = async (data: AuthRequestBody) => {
     updated_at: new Date(),
   });
 
-  await user.save();
-  return user;
+  await authUser.save();
+
+  // Add user to the User collection using the shared service
+  await addUser({
+    auth_id: authUser.id,
+    full_name,
+    phone,
+    date_of_birth,
+    profile_image,
+    address,
+  });
+
+  return authUser;
 };
 
 export const validateUser = async (email: string, password: string) => {
@@ -45,7 +67,9 @@ export const generateToken = (user: any) => {
   });
 };
 
-export const login = async (data: AuthRequestBody) => {
+export const login = async (
+  data: Pick<AuthRequestBody, "email" | "password">
+) => {
   const { email, password } = data;
   const user = await validateUser(email, password);
   const token = generateToken(user);
