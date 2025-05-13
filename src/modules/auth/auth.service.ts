@@ -63,7 +63,7 @@ export const generateToken = (user: any) => {
     permissions: user.permissions,
   };
   return jwt.sign(payload, process.env.JWT_SECRET || "secret", {
-    expiresIn: "1h",
+    expiresIn: "7d",
   });
 };
 
