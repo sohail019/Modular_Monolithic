@@ -73,7 +73,7 @@ const productSchema = new Schema<IProduct>({
 
 // Create indexing for faster queries
 productSchema.index({ name: 1 });
-productSchema.index({ slug: 1 }, { unique: true });
+// productSchema.index({ slug: 1 }, { unique: true });
 productSchema.index({ category_id: 1 });
 productSchema.index({ brand_id: 1 });
 productSchema.index({ price: 1 });

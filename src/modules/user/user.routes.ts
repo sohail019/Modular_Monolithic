@@ -13,7 +13,11 @@ router.get("/me", authenticate, userController.getMyProfile);
 router.put("/me", authenticate, userController.updateMyProfile);
 router.patch("/me/address", authenticate, userController.updateMyAddress);
 router.patch("/me/image", authenticate, userController.updateMyProfileImage);
-router.get("/:id/orders", authenticate, userController.getUserOrders);
+router.get("/me/orders", authenticate, userController.getUserOrders);
 router.put("/updateUserById/:id", authenticate, userController.updateUserById);
-
+router.get(
+  "/me/orders-with-payment",
+  authenticate,
+  userController.getUserOrdersWithPayment
+);
 export default router;
