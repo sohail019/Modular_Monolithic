@@ -8,7 +8,7 @@ import {
   OrderQueryParams,
 } from "./order.types";
 import * as sharedService from "../../shared/user.service";
-
+import { getUserDetailsAndOrdersWithPayment } from "../../shared/order-payment.service";
 // Create a new order
 export const createOrder = async (
   req: Request,
@@ -333,6 +333,26 @@ export const getMyOrders = async (
     // const orders = await orderService.getOrdersByUserId(userId, query);
     const orders = await sharedService.getUserDetailsAndOrders(userId);
     res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getUserOrdersWithPaymentController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const result = await getUserDetailsAndOrdersWithPayment(userId);
+
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

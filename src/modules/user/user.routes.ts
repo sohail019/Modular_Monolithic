@@ -15,9 +15,10 @@ router.patch("/me/address", authenticate, userController.updateMyAddress);
 router.patch("/me/image", authenticate, userController.updateMyProfileImage);
 router.get("/me/orders", authenticate, userController.getUserOrders);
 router.put("/updateUserById/:id", authenticate, userController.updateUserById);
+
 router.get(
-  "/me/orders-with-payment",
+  "/userOrdersWithPayment",
   authenticate,
-  userController.getUserOrdersWithPayment
+  userController.getUserOrdersWithPaymentController
 );
 export default router;
