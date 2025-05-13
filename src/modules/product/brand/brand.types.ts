@@ -1,18 +1,18 @@
 // Request DTOs
-export interface CreateCategoryDto {
+export interface CreateBrandDto {
   name: string;
-  slug?: string;
+  logo_url?: string;
   description?: string;
 }
 
-export interface UpdateCategoryDto {
+export interface UpdateBrandDto {
   name?: string;
-  slug?: string;
+  logo_url?: string;
   description?: string;
 }
 
 // Query parameters
-export interface CategoryQueryParams {
+export interface BrandQueryParams {
   page?: number;
   limit?: number;
   sort?: string;
@@ -20,17 +20,17 @@ export interface CategoryQueryParams {
 }
 
 // Response DTOs
-export interface CategoryResponseDto {
+export interface BrandResponseDto {
   id: string;
   name: string;
-  slug: string;
-  description?: string;
+  logo_url: string;
+  description: string;
   created_at: Date;
   updated_at: Date;
 }
 
-export interface CategoriesListResponse {
-  categories: CategoryResponseDto[];
+export interface BrandsListResponse {
+  brands: BrandResponseDto[];
   page: number;
   limit: number;
   total: number;
