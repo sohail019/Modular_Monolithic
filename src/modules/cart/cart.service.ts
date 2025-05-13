@@ -23,10 +23,10 @@ export const getUserCart = async (userId: string): Promise<any> => {
   })
     .populate({
       path: "product_id",
-      select: "name price image",
-      model: "Product", // Ensure the correct model name is used
+      select: "name price discount_amount discount_type gst_amount image",
+      model: "Product",
     })
-    .exec(); // Ensure proper population of product_id
+    .exec();
 
   // Calculate cart summary
   const summary = calculateCartSummary(cartItems);
@@ -37,12 +37,11 @@ export const getUserCart = async (userId: string): Promise<any> => {
     user_id: userId,
     items: cartItems.map((item) => ({
       id: item._id,
-      product_id: item.product_id._id,
-      product_name: (item.product_id as any).name,
-      product_image: (item.product_id as any).image, // Cast to any to avoid type errors
+      product_id: item.product_id,
+      // product_name: item.product_id.name,
+      // product_image: item.product_id.image,
       quantity: item.quantity,
-
-      subtotal: calculateItemSubtotal(item),
+      // subtotal: calculateItemSubtotal(item),
       status: item.status,
       added_at: item.added_at,
     })),
@@ -146,7 +145,7 @@ export const updateCartItem = async (
     const product = await productService.getProductById(
       cartItem.product_id.toString()
     );
-
+    console.log(cartItem);
     if (
       !product.is_available ||
       product.available_stock < updateData.quantity
@@ -208,7 +207,7 @@ export const clearCart = async (userId: string): Promise<any> => {
   });
 
   if (!cart) {
-    throw new Error("Cart not found");
+    throw new Error("Cart not wwww");
   }
 
   // Update all items to removed status
@@ -222,13 +221,19 @@ export const clearCart = async (userId: string): Promise<any> => {
 
 // Helper functions
 function calculateItemSubtotal(item: any): number {
-  const baseAmount = item.unit_price * item.quantity;
+  const product = item.product_id; // Use the populated product details
+  const baseAmount = product.price * item.quantity;
 
-  if (item.discount_type === "percentage") {
-    return baseAmount - baseAmount * (item.discount / 100);
-  } else {
-    return baseAmount - item.discount;
-  }
+  // Calculate discount
+  const discount =
+    product.discount_type === "percentage"
+      ? baseAmount * (product.discount_amount / 100)
+      : product.discount_amount;
+
+  // Calculate subtotal (base amount - discount + GST)
+  const subtotal = baseAmount - discount + product.gst_amount * item.quantity;
+
+  return subtotal;
 }
 
 function calculateGST(price: number): number {
@@ -246,23 +251,24 @@ function calculateCartSummary(items: any[]): CartSummaryDto {
   };
 
   items.forEach((item) => {
-    const quantity = item.quantity;
-    const baseAmount = item.unit_price * quantity;
-    let discount = 0;
+    const product = item.product_id; // Use the populated product details
+    const baseAmount = product.price * item.quantity;
 
-    if (item.discount_type === "percentage") {
-      discount = baseAmount * (item.discount / 100);
-    } else {
-      discount = item.discount;
-    }
+    // Calculate discount
+    const discount =
+      product.discount_type === "percentage"
+        ? baseAmount * (product.discount_amount / 100)
+        : product.discount_amount;
 
-    summary.total_items += quantity;
+    // Update summary fields
+    summary.total_items += item.quantity;
     summary.subtotal += baseAmount;
     summary.total_discount += discount;
-    summary.total_gst += item.gst_amount * quantity;
+    // summary.total_gst += product.gst_amount * item.quantity;
   });
 
-  summary.total = summary.subtotal - summary.total_discount + summary.total_gst;
+  // Calculate total (subtotal - total_discount + total_gst)
+  summary.total = summary.subtotal - summary.total_discount;
 
   return summary;
 }

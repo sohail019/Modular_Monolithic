@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 // Cart item interface
 export interface ICartItem extends Document {
-  id: string;
+  _id: string;
   cart_id: mongoose.Types.ObjectId;
   product_id: mongoose.Types.ObjectId;
   quantity: number;
@@ -13,7 +13,7 @@ export interface ICartItem extends Document {
 
 // Cart interface
 export interface ICart extends Document {
-  id: string;
+  _id: string;
   user_id: mongoose.Types.ObjectId;
   items: ICartItem[];
   created_at: Date;

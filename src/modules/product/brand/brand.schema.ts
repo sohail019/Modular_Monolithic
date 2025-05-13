@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IBrand extends Document {
-  id: string;
+  _id: string;
   name: string;
   logo_url: string;
   description: string;

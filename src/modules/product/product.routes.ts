@@ -12,7 +12,7 @@ router.get("/:id/availability", productController.checkProductAvailability);
 router.get("/slug/:slug", productController.getProductBySlug);
 router.get("/category/:category", productController.getProductsByCategory);
 router.get("/brand/:brand", productController.getProductsByBrand);
-// router.post("/seeding", productController.seedProducts);
+router.post("/seeding", productController.seedProducts);
 // Protected routes (require authentication)
 router.post("/", authenticate, productController.createProduct);
 router.patch("/:id", authenticate, productController.updateProductById);

@@ -65,6 +65,7 @@ export const updateCartItem = async (
     }
 
     const updateData: UpdateCartItemDto = req.body;
+    console.log("Update data:", updateData);
 
     // Validate update data
     if (updateData.quantity !== undefined && updateData.quantity < 1) {
