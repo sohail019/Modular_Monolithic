@@ -204,9 +204,7 @@ export const getAllOrders = async (
   const orders = await Order.find(filter)
     .sort({ [sortField]: sortDirection })
     .skip((page - 1) * limit)
-    .limit(limit)
-    .populate("user_id", "full_name");
-  // .populate("user_id", "full_name");
+    .limit(limit);
 
   const total = await Order.countDocuments(filter);
 
@@ -222,7 +220,7 @@ export const getAllOrders = async (
 // Get order by ID
 export const getOrderById = async (id: string): Promise<any> => {
   console.log("id", id);
-  const order = await Order.findById(id).populate("user_id", "full_name");
+  const order = await Order.findById(id);
   console.log("order by id", order);
   if (!order) {
     throw new Error("Order not found");

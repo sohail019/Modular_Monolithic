@@ -263,7 +263,7 @@ function calculateCartSummary(items: any[]): CartSummaryDto {
     // Update summary fields
     summary.total_items += item.quantity;
     summary.subtotal += baseAmount;
-    summary.total_discount += discount;
+    summary.total_discount += discount * item.quantity;
     // summary.total_gst += product.gst_amount * item.quantity;
   });
 

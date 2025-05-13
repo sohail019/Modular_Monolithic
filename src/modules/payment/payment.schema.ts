@@ -34,7 +34,7 @@ export type PaymentGateway =
 
 // Payment Interface
 export interface IPayment extends Document {
-  id: string;
+  _id: string;
   order_id: mongoose.Types.ObjectId;
   user_id: mongoose.Types.ObjectId;
   amount_paid: number;
@@ -117,7 +117,7 @@ const PaymentSchema = new Schema<IPayment>(
       type: String,
       default: "",
     },
-    
+
     gst_amount: {
       type: Number,
       default: 0,
