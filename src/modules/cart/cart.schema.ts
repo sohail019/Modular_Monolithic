@@ -6,10 +6,6 @@ export interface ICartItem extends Document {
   cart_id: mongoose.Types.ObjectId;
   product_id: mongoose.Types.ObjectId;
   quantity: number;
-  unit_price: number;
-  discount: number;
-  discount_type: "percentage" | "fixed";
-  gst_amount: number;
   metadata: Record<string, any>;
   status: string;
   added_at: Date;
@@ -19,6 +15,7 @@ export interface ICartItem extends Document {
 export interface ICart extends Document {
   id: string;
   user_id: mongoose.Types.ObjectId;
+  items: ICartItem[];
   created_at: Date;
   updated_at: Date;
 }
@@ -40,23 +37,7 @@ const CartItemSchema = new Schema<ICartItem>({
     required: true,
     min: 1,
   },
-  unit_price: {
-    type: Number,
-    required: true,
-  },
-  discount: {
-    type: Number,
-    default: 0,
-  },
-  discount_type: {
-    type: String,
-    enum: ["percentage", "fixed"],
-    default: "percentage",
-  },
-  gst_amount: {
-    type: Number,
-    default: 0,
-  },
+
   metadata: {
     type: Schema.Types.Mixed,
     default: {},
@@ -80,6 +61,15 @@ const CartSchema = new Schema<ICart>(
       ref: "User",
       required: true,
       unique: true,
+    },
+    items: [CartItemSchema],
+    created_at: {
+      type: Date,
+      default: Date.now,
+    },
+    updated_at: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
