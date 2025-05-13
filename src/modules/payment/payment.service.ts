@@ -19,9 +19,9 @@ export const initiatePayment = async (
   try {
     // Get the order
     const order = await orderService.getOrderById(paymentData.order_id);
-
     // Check if order belongs to user
-    if (order.user_id !== userId) {
+
+    if (order.user_id != userId) {
       throw new Error("Order does not belong to user");
     }
 
