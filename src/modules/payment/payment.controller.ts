@@ -16,13 +16,17 @@ export const initiatePayment = async (
 ): Promise<void> => {
   try {
     const userId = req.user?.id;
+    
 
     if (!userId) {
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
 
+
+
     const paymentData: InitiatePaymentDto = req.body;
+    console.log("Payment Data:", paymentData);
 
     // Validate required fields
     if (!paymentData.order_id || !paymentData.method || !paymentData.gateway) {

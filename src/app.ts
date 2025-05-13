@@ -9,6 +9,7 @@ import categoryRoutes from "./modules/product/category/category.routes";
 import brandRoutes from "./modules/product/brand/brand.routes";
 import cartRoutes from "./modules/cart/cart.routes";
 import orderRoutes from "./modules/order/order.routes";
+import paymentRoutes from "./modules/payment/payment.routes";
 dotenv.config();
 
 const app: Application = express();
@@ -29,6 +30,7 @@ app.use("/api/brands", brandRoutes);
 // Add more routes as needed
 app.use("/api/cart", cartRoutes); // cart routes
 app.use("/api/orders", orderRoutes);
+app.use("/api/payments", paymentRoutes);
 // Root endpoint
 app.get("/", (req, res) => {
   res.send("Modular Monolithic Auth Server Running!");
