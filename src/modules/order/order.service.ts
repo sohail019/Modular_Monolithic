@@ -16,79 +16,82 @@ export const createOrder = async (orderData: CreateOrderDto): Promise<any> => {
   let totalAmount = 0;
   let gstAmount = 0;
 
+  // Validate required fields
+  if (!orderData.user_id) {
+    throw new Error("User ID is required");
+  }
+  if (
+    !orderData.cart_id &&
+    (!orderData.items || orderData.items.length === 0)
+  ) {
+    throw new Error("Either cart_id or items array is required");
+  }
+  if (orderData.cart_id && orderData.items) {
+    throw new Error("Cannot provide both cart_id and items array");
+  }
+
   // Create order from cart
   if (orderData.cart_id) {
-    const cart = cartService.getCartById(orderData.cart_id);
-
-    // Ensure cart exists
-    if (cart === undefined || cart === null) {
+    const cart = await cartService.getCartById(orderData.cart_id);
+    if (!cart) {
       throw new Error("Cart not found");
     }
 
-    // Check if cart belongs to user
-    if ((await cart).user_id.toString() !== orderData.user_id) {
+    if (cart.user_id.toString() !== orderData.user_id) {
       throw new Error("Cart does not belong to user");
     }
 
-    // Get cart items
     const cartItems = await cartService.getCartItems(orderData.cart_id);
-
-    // Check if cart has items
     if (cartItems.length === 0) {
       throw new Error("Cart is empty");
     }
 
-    // Convert cart items to order items
     items = await Promise.all(
       cartItems.map(async (item: any) => {
         const product = await productService.getProductById(item.product_id);
 
-        // Check product availability
         if (!product.is_available || product.available_stock < item.quantity) {
           throw new Error(
             `Product ${product.name} is not available in the requested quantity`
           );
         }
 
-        // Calculate item total
-        const itemTotal = item.unit_price * item.quantity;
+        const gstRate = 0.18; // Assuming 18% GST
+        const itemGst = product.price * gstRate;
+        const itemTotal = product.price * item.quantity;
+
         totalAmount += itemTotal;
-        gstAmount += item.gst_amount * item.quantity;
+        gstAmount += itemGst * item.quantity;
 
         return {
           product_id: item.product_id,
           product_name: product.name,
           quantity: item.quantity,
-          unit_price: item.unit_price,
-          discount_amount: item.discount || 0,
-          discount_type: item.discount_type || "fixed",
-          gst_amount: item.gst_amount || 0,
+          unit_price: product.price,
+          discount_amount: product.discount_amount || 0,
+          discount_type: product.discount_type || "fixed",
+          gst_amount: itemGst,
         };
       })
     );
 
-    // Clear cart after order creation
-    await cartService.clearCart(orderData.cart_id);
-  }
-  // Create order from items array
-  else if (orderData.items && orderData.items.length > 0) {
+    // Optionally clear the cart after order creation
+    // await cartService.clearCart(orderData.cart_id);
+  } else if (orderData.items && orderData.items.length > 0) {
     items = await Promise.all(
       orderData.items.map(async (item) => {
         const product = await productService.getProductById(item.product_id);
 
-        // Check product availability
         if (!product.is_available || product.available_stock < item.quantity) {
           throw new Error(
             `Product ${product.name} is not available in the requested quantity`
           );
         }
 
-        // Calculate GST (18% of price)
-        const gstRate = 0.18;
+        const gstRate = 0.18; // Assuming 18% GST
         const itemGst = product.price * gstRate;
-
-        // Calculate item total
         const itemTotal = product.price * item.quantity;
+
         totalAmount += itemTotal;
         gstAmount += itemGst * item.quantity;
 
@@ -154,10 +157,12 @@ export const createOrder = async (orderData: CreateOrderDto): Promise<any> => {
   // Update product stock
   await Promise.all(
     items.map(async (item: any) => {
-      productService.decreaseStock(item.product_id, item.quantity);
+      console.log("decres");
+      await productService.decreaseStock(item.product_id, item.quantity);
     })
   );
 
+  console.log("savedOrder", savedOrder);
   return await getOrderById(savedOrder._id as string);
 };
 
@@ -200,7 +205,8 @@ export const getAllOrders = async (
     .sort({ [sortField]: sortDirection })
     .skip((page - 1) * limit)
     .limit(limit)
-    .populate("user_id", "full_name email");
+    .populate("user_id", "full_name");
+  // .populate("user_id", "full_name");
 
   const total = await Order.countDocuments(filter);
 
@@ -215,8 +221,9 @@ export const getAllOrders = async (
 
 // Get order by ID
 export const getOrderById = async (id: string): Promise<any> => {
-  const order = await Order.findById(id).populate("user_id", "full_name email");
-
+  console.log("id", id);
+  const order = await Order.findById(id).populate("user_id", "full_name");
+  console.log("order by id", order);
   if (!order) {
     throw new Error("Order not found");
   }

@@ -303,11 +303,50 @@ export const searchProducts = async (
     pages: Math.ceil(total / limit),
   };
 };
-export function decreaseStock(product_id: any, quantity: any) {
-    throw new Error("Function not implemented.");
+export async function decreaseStock(product_id: string, quantity: number) {
+  if (quantity <= 0) {
+    throw new Error("Quantity to decrease must be greater than 0");
+  }
+
+  const product = await Product.findById(product_id);
+
+  if (!product) {
+    throw new Error("Product not found");
+  }
+
+  if (!product.is_available || product.available_stock < quantity) {
+    throw new Error(
+      `Insufficient stock for product: ${product.name}. Available stock: ${product.available_stock}`
+    );
+  }
+
+  product.available_stock -= quantity;
+
+  // If stock becomes 0, mark the product as unavailable
+  if (product.available_stock === 0) {
+    product.is_available = false;
+  }
+  console.log("decres22");
+  await product.save();
 }
 
-export function increaseStock(arg0: string, quantity: number) {
-    throw new Error("Function not implemented.");
-}
+export async function increaseStock(product_id: string, quantity: number) {
+  if (quantity <= 0) {
+    throw new Error("Quantity to increase must be greater than 0");
+  }
 
+  const product = await Product.findById(product_id);
+
+  if (!product) {
+    throw new Error("Product not found");
+  }
+
+  product.available_stock += quantity;
+
+  // If stock is increased, mark the product as available
+  if (!product.is_available && product.available_stock > 0) {
+    product.is_available = true;
+  }
+
+  await product.save();
+}

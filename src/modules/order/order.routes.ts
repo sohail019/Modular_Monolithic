@@ -9,7 +9,7 @@ router.use(authenticate);
 
 // Order routes
 // Create order
-router.post("/", orderController.createOrder);
+router.post("/create", orderController.createOrder);
 
 // Get all orders (admin)
 router.get("/", orderController.getAllOrders);

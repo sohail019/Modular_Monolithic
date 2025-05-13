@@ -28,7 +28,7 @@ export interface IStatusLog {
 
 // Order Item Interface
 export interface IOrderItem extends Document {
-  id: string;
+  _id: string;
   order_id: mongoose.Types.ObjectId;
   product_id: mongoose.Types.ObjectId;
   product_name: string;
@@ -42,7 +42,7 @@ export interface IOrderItem extends Document {
 
 // Order Interface
 export interface IOrder extends Document {
-  id: string;
+  _id: string;
   user_id: mongoose.Types.ObjectId;
   status: OrderStatus;
   total_amount: number;

@@ -418,3 +418,36 @@ export const searchProducts = async (
 //     res.status(500).json({ message: error.message });
 //   }
 // };
+
+export const seedProducts = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    // Fetch all products
+    const products = await ProductModel.find();
+
+    // Update each product with the subtotal
+    for (const product of products) {
+      const discountAmount =
+        product.discount_type === "percentage"
+          ? (product.price * product.discount_amount) / 100
+          : product.discount_amount;
+
+      const subtotal = product.price - discountAmount;
+
+      // Update the product with the subtotal
+      await ProductModel.findByIdAndUpdate(
+        product._id,
+        { subtotal },
+        { new: true }
+      );
+    }
+
+    res.status(200).json({
+      message: "All products have been updated with subtotals!",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

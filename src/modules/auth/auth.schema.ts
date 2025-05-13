@@ -1,6 +1,7 @@
 import { Schema, model, Document } from "mongoose";
 
 export interface IAuth extends Document {
+  _id: string;
   email: string;
   password_hash: string;
   login_provider: string;

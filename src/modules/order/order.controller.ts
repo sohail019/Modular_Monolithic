@@ -27,6 +27,10 @@ export const createOrder = async (
     };
 
     const order = await orderService.createOrder(orderData);
+    if (!order) {
+      res.status(400).json({ message: "Failed to create order" });
+      return;
+    }
     res.status(201).json(order);
   } catch (error) {
     res.status(400).json({ message: error.message });
