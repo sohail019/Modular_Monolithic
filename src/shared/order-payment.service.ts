@@ -49,3 +49,52 @@ export const getUserDetailsAndOrdersWithPayment = async (userId: string) => {
     throw new Error(`Error fetching user details and orders: ${error.message}`);
   }
 };
+
+export const getOrderDetailWithItemsAndPayments = async (orderId: string) => {
+  try {
+    // Fetch order details
+    const order = await orderService.getOrderById(orderId);
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+    // Fetch payments for the order
+    const payments = await paymentService.getPaymentsByOrderId(orderId);
+
+    return {
+      order,
+      payments,
+    };
+  } catch (error) {
+    throw new Error(`Error fetching order details: ${error.message}`);
+  }
+};
+
+export const getOrderStatusWithUser = async (orderId: string) => {
+  try {
+    // Fetch order details
+    const order = await orderService.getOrderById(orderId);
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+    // Fetch user details associated with the order
+    const user = await userService.getUserById(order.user_id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return {
+      order_status: order.status,
+      user: {
+        id: user._id,
+        full_name: user.full_name,
+        // email: user.email,
+        phone: user.phone,
+        address: user.address,
+      },
+    };
+  } catch (error) {
+    throw new Error(`Error fetching order status with user: ${error.message}`);
+  }
+};

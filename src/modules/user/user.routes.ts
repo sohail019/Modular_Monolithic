@@ -21,4 +21,10 @@ router.get(
   authenticate,
   userController.getUserOrdersWithPaymentController
 );
+
+router.get(
+  "/:orderId/statusWithUser",
+  userController.getOrderStatusWithUserController
+);
+
 export default router;

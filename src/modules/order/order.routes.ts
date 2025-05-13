@@ -45,4 +45,9 @@ router.get("/:id/items", orderController.getOrderItems);
 router.patch("/:orderId/items/:itemId", orderController.updateOrderItem);
 router.delete("/:orderId/items/:itemId", orderController.deleteOrderItem);
 
+router.get(
+  "/:orderId/details",
+  orderController.getOrderDetailWithItemsAndPaymentsController
+);
+
 export default router;
