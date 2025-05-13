@@ -41,10 +41,7 @@ export const getUserCart = async (userId: string): Promise<any> => {
       product_name: (item.product_id as any).name,
       product_image: (item.product_id as any).image, // Cast to any to avoid type errors
       quantity: item.quantity,
-      unit_price: item.unit_price,
-      discount: item.discount,
-      discount_type: item.discount_type,
-      gst_amount: item.gst_amount,
+
       subtotal: calculateItemSubtotal(item),
       status: item.status,
       added_at: item.added_at,
@@ -88,14 +85,14 @@ export const addToCart = async (
     // Update existing item quantity if it's active
     if (existingItem.status === "active") {
       existingItem.quantity += item.quantity;
-      existingItem.unit_price = product.price; // Always update to latest price
+
       await existingItem.save();
       return await getUserCart(userId);
     } else {
       // If item exists but not active, update status and quantity
       existingItem.status = "active";
       existingItem.quantity = item.quantity;
-      existingItem.unit_price = product.price;
+
       await existingItem.save();
       return await getUserCart(userId);
     }
