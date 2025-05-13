@@ -7,6 +7,7 @@ import {
   ApplyDiscountDto,
   OrderQueryParams,
 } from "./order.types";
+import * as sharedService from "../../shared/user.service";
 
 // Create a new order
 export const createOrder = async (
@@ -329,7 +330,8 @@ export const getMyOrders = async (
       sort: req.query.sort as string,
     };
 
-    const orders = await orderService.getOrdersByUserId(userId, query);
+    // const orders = await orderService.getOrdersByUserId(userId, query);
+    const orders = await sharedService.getUserDetailsAndOrders(userId);
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ message: error.message });

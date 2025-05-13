@@ -85,17 +85,51 @@ export const validateUser = async (email: string, password: string) => {
   return user;
 };
 
-export const generateTokens = (user: any) => {
+// export const generateTokens = (user: any) => {
+//   const accessPayload = {
+//     id: user.id,
+//     email: user.email,
+//     role: user.role,
+//     permissions: user.permissions,
+//     type: "access",
+//   };
+
+//   const refreshPayload = {
+//     id: user.id,
+//     type: "refresh",
+//   };
+
+//   const accessToken = jwt.sign(accessPayload, JWT_SECRET, {
+//     expiresIn: ACCESS_TOKEN_EXPIRY,
+//   });
+
+//   const refreshToken = jwt.sign(refreshPayload, REFRESH_SECRET, {
+//     expiresIn: REFRESH_TOKEN_EXPIRY,
+//   });
+
+//   return { accessToken, refreshToken };
+// };
+
+export const generateTokens = async (authUser: any) => {
+  // Fetch the user details using the auth_id
+  const user = await userService.getUserByAuthId(authUser._id);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
   const accessPayload = {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-    permissions: user.permissions,
+    id: user._id, // Use user_id from the User table
+    auth_id: authUser._id, // Use auth_id from the Auth table
+    email: authUser.email,
+    role: authUser.role,
+    permissions: authUser.permissions,
     type: "access",
   };
 
   const refreshPayload = {
-    id: user.id,
+    id: user._id, // Use user_id from the User table
+    auth_id: authUser._id, // Use auth_id from the Auth table
     type: "refresh",
   };
 
@@ -116,7 +150,7 @@ export const login = async (
   const { email, password } = data;
   const user = await validateUser(email, password);
 
-  const { accessToken, refreshToken } = generateTokens(user);
+  const { accessToken, refreshToken } = await generateTokens(user);
 
   // Store refresh token in the database
   user.refresh_tokens = user.refresh_tokens || [];
@@ -180,7 +214,7 @@ export const refreshToken = async (token: string) => {
     }
 
     // Generate new tokens
-    const tokens = generateTokens(user);
+    const tokens = await generateTokens(user);
 
     // Replace the old refresh token with the new one
     const tokenIndex = user.refresh_tokens.indexOf(token);

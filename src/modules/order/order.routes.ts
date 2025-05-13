@@ -15,13 +15,13 @@ router.post("/create", orderController.createOrder);
 router.get("/", orderController.getAllOrders);
 
 // Get order by ID
-router.get("/:id", orderController.getOrderById);
+// router.get("/:id", orderController.getOrderById);
 
 // Get user's orders
 router.get("/user/:userId", orderController.getOrdersByUserId);
 
 // Get my orders
-router.get("/me/orders", orderController.getMyOrders);
+router.get("/getUsersOrders", orderController.getMyOrders);
 
 // Update order status
 router.patch("/:id/status", orderController.updateOrderStatus);
