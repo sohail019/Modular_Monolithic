@@ -8,6 +8,7 @@ export interface IProduct extends Document {
   category_id: mongoose.Types.ObjectId;
   brand_id: mongoose.Types.ObjectId;
   price: number;
+  subtotal: number;
   discount_amount: number;
   discount_type: "percentage" | "fixed";
   available_stock: number;
@@ -34,6 +35,10 @@ const productSchema = new Schema<IProduct>({
     type: Schema.Types.ObjectId,
     ref: "Category",
     required: true,
+  },
+  subtotal: {
+    type: Number,
+    default: 0,
   },
   brand_id: {
     type: Schema.Types.ObjectId,
