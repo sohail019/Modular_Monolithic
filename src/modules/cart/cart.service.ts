@@ -269,3 +269,10 @@ function calculateCartSummary(items: any[]): CartSummaryDto {
 
   return summary;
 }
+export function getCartById(cart_id: string) {
+  return Cart.findById(cart_id);
+}
+
+export function getCartItems(cart_id: string) {
+  return CartItem.find({ cart_id }).populate("product_id");
+}
