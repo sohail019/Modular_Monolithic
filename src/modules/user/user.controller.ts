@@ -18,7 +18,7 @@ export const getMyProfile = async (req: Request, res: Response) => {
       return;
     }
 
-    const user = await userService.getUserByAuthId(authId);
+    const user = await userService.getUserById(authId);
     res.status(200).json(user);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -57,10 +57,7 @@ export const updateMyProfile = async (req: Request, res: Response) => {
     }
 
     const updateData: UpdateUserDto = req.body;
-    const updatedUser = await userService.updateUserByAuthId(
-      authId,
-      updateData
-    );
+    const updatedUser = await userService.updateUserById(authId, updateData);
     res.status(200).json(updatedUser);
   } catch (error) {
     res.status(400).json({ message: error.message });
