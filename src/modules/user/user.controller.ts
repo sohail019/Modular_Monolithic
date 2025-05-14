@@ -151,14 +151,12 @@ export const getUserOrdersWithPaymentController = async (
   }
 };
 
-
 // Add this to your user controller
 export const getProfileWithAuthStatus = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-
     const userId = req.user?.auth_id;
 
     if (!userId) {
@@ -170,7 +168,6 @@ export const getProfileWithAuthStatus = async (
     res.status(200).json(profile);
   } catch (error) {
     res.status(404).json({ message: error.message });
-
   }
 };
 
@@ -179,12 +176,12 @@ export const getOrderStatusWithUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-      const { orderId } = req.params;
+    const { orderId } = req.params;
 
-    const result = await sharedService.getOrderStatusWithUser(orderId);
+    const result = await orderPaymentService.getOrderStatusWithUser(orderId);
 
     res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
-}
+  }
 };
