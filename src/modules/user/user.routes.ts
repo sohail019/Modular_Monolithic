@@ -27,4 +27,11 @@ router.get(
   authenticate,
   userController.getProfileWithAuthStatus
 );
+
+  router.get(
+  "/:orderId/statusWithUser",
+  userController.getOrderStatusWithUserController
+);
+
+
 export default router;
