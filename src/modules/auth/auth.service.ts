@@ -313,3 +313,22 @@ export const isTokenRevoked = async (token: string) => {
   const revokedToken = await RevokedToken.findOne({ token });
   return !!revokedToken;
 };
+
+export const getAuthById = async (authId: string) => {
+  try {
+    const auth = await Auth.findById(authId, {
+      password_hash: 0, // Exclude sensitive data
+      refresh_tokens: 0, // Exclude tokens for security
+      verification_token: 0,
+      verification_token_expires: 0,
+    });
+
+    if (!auth) {
+      throw new Error("Auth record not found");
+    }
+
+    return auth;
+  } catch (error) {
+    throw new Error(`Error fetching auth data: ${error.message}`);
+  }
+};

@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { NextFunction, Router } from "express";
 import * as userController from "./user.controller";
 import { authenticate } from "../../middleware/auth.middleware";
 
@@ -23,8 +23,15 @@ router.get(
 );
 
 router.get(
+  "/profileWithAuthStatus",
+  authenticate,
+  userController.getProfileWithAuthStatus
+);
+
+  router.get(
   "/:orderId/statusWithUser",
   userController.getOrderStatusWithUserController
 );
+
 
 export default router;

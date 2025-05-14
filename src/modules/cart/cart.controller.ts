@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as cartService from "./cart.service";
 import { AddToCartDto, UpdateCartItemDto } from "./cart.types";
+import * as cartProductService from "../../shared/cart-product.service";
 
 // Get user cart
 export const getUserCart = async (
@@ -165,5 +166,45 @@ export const moveToCart = async (
     res.status(200).json(updatedCart);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+export const getMyCartWithProducts = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const cartWithProducts =
+      await cartProductService.getUserCartWithProductSnapshot(userId);
+    res.status(200).json(cartWithProducts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
+ * Get a specific cart with product snapshots (for admins)
+ */
+export const getCartWithProducts = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { cartId } = req.params;
+
+    // Optional: Add authorization check here to ensure admin access
+
+    const cartWithProducts =
+      await cartProductService.getCartWithProductSnapshot(cartId);
+    res.status(200).json(cartWithProducts);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };

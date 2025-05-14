@@ -139,6 +139,24 @@ export const getProductById = async (id: string) => {
   return product;
 };
 
+export const getProductsByIds = async (
+  productIds: string[]
+): Promise<any[]> => {
+  try {
+    // Convert string IDs to ObjectIds for MongoDB query
+    const objectIds = productIds.map((id) => new mongoose.Types.ObjectId(id));
+
+    // Fetch products that match any of the IDs in the array
+    const products = await Product.find({
+      _id: { $in: objectIds },
+    });
+
+    return products;
+  } catch (error) {
+    throw new Error(`Error fetching products by IDs: ${error.message}`);
+  }
+};
+
 // Get product by slug
 export const getProductBySlug = async (slug: string) => {
   const product = await Product.findOne({ slug });
