@@ -11,6 +11,7 @@ import * as sharedService from "../../shared/user.service";
 import {
   getOrderDetailWithItemsAndPayments,
   getUserDetailsAndOrdersWithPayment,
+  getOrderDetailsWithShippingAddress,
 } from "../../shared/order-payment.service";
 // Create a new order
 export const createOrder = async (
@@ -349,6 +350,21 @@ export const getOrderDetailWithItemsAndPaymentsController = async (
     const { orderId } = req.params;
 
     const result = await getOrderDetailWithItemsAndPayments(orderId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const getOrderDetailsWithShippingAddressController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { orderId } = req.params;
+
+    const result = await getOrderDetailsWithShippingAddress(orderId);
 
     res.status(200).json(result);
   } catch (error) {

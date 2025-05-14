@@ -98,3 +98,36 @@ export const getOrderStatusWithUser = async (orderId: string) => {
     throw new Error(`Error fetching order status with user: ${error.message}`);
   }
 };
+
+export const getOrderDetailsWithShippingAddress = async (orderId: string) => {
+  try {
+    // Fetch order details
+    const order = await orderService.getOrderById(orderId);
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+    // Fetch user details associated with the order
+    const user = await userService.getUserById(order.user_id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return {
+      order: {
+        id: order._id,
+        status: order.status,
+        total_amount: order.total_amount,
+        discount_amount: order.discount_amount,
+        final_amount: order.final_amount,
+        created_at: order.created_at,
+        items: order.items, // Include order items if needed
+      },
+      shipping_address: user.address, // Return the user's address
+    };
+  } catch (error) {
+    throw new Error(
+      `Error fetching order details with shipping address: ${error.message}`
+    );
+  }
+};

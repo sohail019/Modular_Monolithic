@@ -50,4 +50,9 @@ router.get(
   orderController.getOrderDetailWithItemsAndPaymentsController
 );
 
+router.get(
+  "/:orderId/detailsWithShippingAddress",
+  authenticate,
+  orderController.getOrderDetailsWithShippingAddressController
+);
 export default router;
