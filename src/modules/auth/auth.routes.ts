@@ -7,13 +7,15 @@ const router = Router();
 // Public routes (no authentication required)
 router.post("/register", authController.register);
 router.post("/login", authController.login);
-router.post("/refresh-token", authController.refreshToken);
-router.post("/verify-email", authController.verifyEmail);
-router.post("/resend-verification", authController.resendVerificationEmail);
+router.post("/refreshToken", authController.refreshToken);
+router.post("/verifyEmail", authController.verifyEmail);
+router.post("/resendVerification", authController.resendVerificationEmail);
 
 // Protected routes (require authentication)
 router.use(authenticate);
 router.post("/logout", authController.logout);
 router.get("/profile", authController.getProfile);
+
+router.get("/myFullProfile", authenticate, authController.getMyFullProfile);
 
 export default router;

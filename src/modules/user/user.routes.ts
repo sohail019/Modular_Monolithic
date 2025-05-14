@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { NextFunction, Router } from "express";
 import * as userController from "./user.controller";
 import { authenticate } from "../../middleware/auth.middleware";
 
@@ -20,5 +20,11 @@ router.get(
   "/userOrdersWithPayment",
   authenticate,
   userController.getUserOrdersWithPaymentController
+);
+
+router.get(
+  "/profileWithAuthStatus",
+  authenticate,
+  userController.getProfileWithAuthStatus
 );
 export default router;

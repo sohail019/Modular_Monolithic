@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import * as authService from "./auth.service";
 import { AuthRequestBody } from "./auth.types";
 import * as userService from "../../modules/user/user.service";
+import * as userAuthService from "../../shared/user-auth.service";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -116,7 +117,7 @@ export const getProfile = async (req: Request, res: Response) => {
   try {
     if (!req.user || !req.user.id) {
       res.status(401).json({ error: "Unauthorized" });
-      return; 
+      return;
     }
 
     const profile = await authService.getProfile(req.user.id);
@@ -158,5 +159,24 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
     res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+};
+
+export const getMyFullProfile = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user?.auth_id;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const profile = await userAuthService.getUserProfileByAuthId(userId);
+    res.status(200).json(profile);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };

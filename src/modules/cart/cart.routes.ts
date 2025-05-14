@@ -18,4 +18,7 @@ router.delete("/", cartController.clearCart);
 router.post("/items/:id/save-for-later", cartController.saveForLater);
 router.post("/items/:id/move-to-cart", cartController.moveToCart);
 
+router.get("/getMyCartWithProducts", cartController.getMyCartWithProducts);
+router.get("/:cartId/getCartWithProducts", cartController.getCartWithProducts); // Admin route
+
 export default router;

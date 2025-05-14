@@ -276,6 +276,28 @@ export function getCartById(cart_id: string) {
   return Cart.findById(cart_id);
 }
 
-export function getCartItems(cart_id: string) {
-  return CartItem.find({ cart_id }).populate("product_id");
-}
+export const getActiveCartByUserId = async (userId: string) => {
+  try {
+    // Find the most recent cart that is not checked out
+    const cart = await Cart.findOne({
+      user_id: new mongoose.Types.ObjectId(userId),
+      is_checked_out: false,
+    }).sort({ updated_at: -1 });
+
+    return cart;
+  } catch (error) {
+    throw new Error(`Error getting active cart for user: ${error.message}`);
+  }
+};
+
+export const getCartItems = async (cartId: string) => {
+  try {
+    const items = await CartItem.find({
+      cart_id: new mongoose.Types.ObjectId(cartId),
+    });
+
+    return items;
+  } catch (error) {
+    throw new Error(`Error getting cart items: ${error.message}`);
+  }
+};
