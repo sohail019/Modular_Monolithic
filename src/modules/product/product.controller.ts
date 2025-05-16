@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as productService from "./product.service";
+import { products } from "../../products_seed_data_300";
 import {
   CreateProductDto,
   UpdateProductDto,
@@ -197,25 +198,29 @@ export const searchProducts = async (
 //     // Seed categories
 //     const categories = [
 //       {
-//         name: "Electronics",
-//         slug: "electronics",
-//         description: "Electronic items",
+//         name: "Gaming",
+//         slug: "gaming",
+//         description: "Gaming consoles and accessories",
 //       },
 //       {
-//         name: "Fashion",
-//         slug: "fashion",
-//         description: "Clothing and accessories",
+//         name: "Health & Beauty",
+//         slug: "health-beauty",
+//         description: "Health and beauty products",
 //       },
 //       {
-//         name: "Home Appliances",
-//         slug: "home-appliances",
-//         description: "Appliances for home use",
+//         name: "Automotive",
+//         slug: "automotive",
+//         description: "Automotive parts and accessories",
 //       },
-//       { name: "Books", slug: "books", description: "Books and literature" },
 //       {
-//         name: "Sports",
-//         slug: "sports",
-//         description: "Sports equipment and gear",
+//         name: "Toys & Hobbies",
+//         slug: "toys-hobbies",
+//         description: "Toys, games, and hobby supplies",
+//       },
+//       {
+//         name: "Groceries",
+//         slug: "groceries",
+//         description: "Daily essentials and groceries",
 //       },
 //     ];
 //     await CategoryModel.insertMany(categories);
@@ -224,195 +229,36 @@ export const searchProducts = async (
 //     // Seed brands
 //     const brands = [
 //       {
-//         name: "Samsung",
-//         logo_url: "https://example.com/samsung-logo.png",
-//         description: "Electronics brand",
+//         name: "Sony",
+//         logo_url: "https://example.com/sony-logo.png",
+//         description: "Gaming and electronics brand",
 //       },
 //       {
-//         name: "Nike",
-//         logo_url: "https://example.com/nike-logo.png",
-//         description: "Sportswear brand",
+//         name: "Maybelline",
+//         logo_url: "https://example.com/maybelline-logo.png",
+//         description: "Health and beauty brand",
 //       },
 //       {
-//         name: "LG",
-//         logo_url: "https://example.com/lg-logo.png",
-//         description: "Home appliances brand",
+//         name: "Goodyear",
+//         logo_url: "https://example.com/goodyear-logo.png",
+//         description: "Automotive tires and accessories",
 //       },
 //       {
-//         name: "Penguin",
-//         logo_url: "https://example.com/penguin-logo.png",
-//         description: "Book publisher",
+//         name: "Lego",
+//         logo_url: "https://example.com/lego-logo.png",
+//         description: "Toys and hobby supplies",
 //       },
 //       {
-//         name: "Adidas",
-//         logo_url: "https://example.com/adidas-logo.png",
-//         description: "Sportswear brand",
+//         name: "Whole Foods",
+//         logo_url: "https://example.com/wholefoods-logo.png",
+//         description: "Organic groceries and daily essentials",
 //       },
 //     ];
 //     await BrandModel.insertMany(brands);
 //     console.log("Brands seeded successfully!");
 
-//     // Seed products
-//     // const products = await productService.seedProducts();
-//     console.log("Products seeded successfully!");
-
 //     res.status(201).json({
-//       message: "Categories, brands, and products seeded successfully!",
-//     });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// export const seedProducts = async (
-//   req: Request,
-//   res: Response
-// ): Promise<void> => {
-//   try {
-//     // Fetch category IDs
-//     const categories = await CategoryModel.find({}, "_id").lean();
-//     const categoryIds = categories.map((category) => category._id);
-
-//     // Fetch brand IDs
-//     const brands = await BrandModel.find({}, "_id").lean();
-//     const brandIds = brands.map((brand) => brand._id);
-
-//     if (categoryIds.length === 0 || brandIds.length === 0) {
-//       res.status(400).json({
-//         message: "Please seed categories and brands before seeding products.",
-//       });
-//       return;
-//     }
-
-//     // Seed products
-//     const products = [
-//       {
-//         name: "Smartphone",
-//         slug: "smartphone",
-//         description: "A high-quality smartphone.",
-//         category_id: categoryIds[0],
-//         brand_id: brandIds[0],
-//         price: 699,
-//         discount_amount: 50,
-//         discount_type: "fixed",
-//         available_stock: 100,
-//         is_available: true,
-//       },
-//       {
-//         name: "Running Shoes",
-//         slug: "running-shoes",
-//         description: "Comfortable running shoes.",
-//         category_id: categoryIds[1],
-//         brand_id: brandIds[1],
-//         price: 120,
-//         discount_amount: 10,
-//         discount_type: "percentage",
-//         available_stock: 200,
-//         is_available: true,
-//       },
-//       {
-//         name: "Microwave Oven",
-//         slug: "microwave-oven",
-//         description: "A powerful microwave oven.",
-//         category_id: categoryIds[2],
-//         brand_id: brandIds[2],
-//         price: 299,
-//         discount_amount: 20,
-//         discount_type: "fixed",
-//         available_stock: 50,
-//         is_available: true,
-//       },
-//       {
-//         name: "Fiction Book",
-//         slug: "fiction-book",
-//         description: "A best-selling fiction book.",
-//         category_id: categoryIds[3],
-//         brand_id: brandIds[3],
-//         price: 20,
-//         discount_amount: 5,
-//         discount_type: "fixed",
-//         available_stock: 300,
-//         is_available: true,
-//       },
-//       {
-//         name: "Basketball",
-//         slug: "basketball",
-//         description: "A durable basketball.",
-//         category_id: categoryIds[4],
-//         brand_id: brandIds[4],
-//         price: 50,
-//         discount_amount: 10,
-//         discount_type: "percentage",
-//         available_stock: 150,
-//         is_available: true,
-//       },
-//       {
-//         name: "Laptop",
-//         slug: "laptop",
-//         description: "A high-performance laptop.",
-//         category_id: categoryIds[0],
-//         brand_id: brandIds[0],
-//         price: 1200,
-//         discount_amount: 100,
-//         discount_type: "fixed",
-//         available_stock: 80,
-//         is_available: true,
-//       },
-//       {
-//         name: "T-Shirt",
-//         slug: "t-shirt",
-//         description: "A comfortable cotton t-shirt.",
-//         category_id: categoryIds[1],
-//         brand_id: brandIds[1],
-//         price: 25,
-//         discount_amount: 5,
-//         discount_type: "percentage",
-//         available_stock: 500,
-//         is_available: true,
-//       },
-//       {
-//         name: "Refrigerator",
-//         slug: "refrigerator",
-//         description: "A spacious refrigerator.",
-//         category_id: categoryIds[2],
-//         brand_id: brandIds[2],
-//         price: 800,
-//         discount_amount: 50,
-//         discount_type: "fixed",
-//         available_stock: 40,
-//         is_available: true,
-//       },
-//       {
-//         name: "Notebook",
-//         slug: "notebook",
-//         description: "A handy notebook for writing.",
-//         category_id: categoryIds[3],
-//         brand_id: brandIds[3],
-//         price: 5,
-//         discount_amount: 1,
-//         discount_type: "fixed",
-//         available_stock: 1000,
-//         is_available: true,
-//       },
-//       {
-//         name: "Football",
-//         slug: "football",
-//         description: "A durable football.",
-//         category_id: categoryIds[4],
-//         brand_id: brandIds[4],
-//         price: 30,
-//         discount_amount: 5,
-//         discount_type: "percentage",
-//         available_stock: 200,
-//         is_available: true,
-//       },
-//     ];
-
-//     await ProductModel.insertMany(products);
-//     console.log("Products seeded successfully!");
-
-//     res.status(201).json({
-//       message: "Products seeded successfully!",
+//       message: "10 categories and 10 brands seeded successfully!",
 //     });
 //   } catch (error) {
 //     res.status(500).json({ message: error.message });
@@ -424,30 +270,67 @@ export const seedProducts = async (
   res: Response
 ): Promise<void> => {
   try {
-    // Fetch all products
-    const products = await ProductModel.find();
+    // Fetch category IDs
+    const categories = await CategoryModel.find({}, "_id").lean();
+    const categoryIds = categories.map((category) => category._id);
 
-    // Update each product with the subtotal
-    for (const product of products) {
-      const discountAmount =
-        product.discount_type === "percentage"
-          ? (product.price * product.discount_amount) / 100
-          : product.discount_amount;
+    // Fetch brand IDs
+    const brands = await BrandModel.find({}, "_id").lean();
+    const brandIds = brands.map((brand) => brand._id);
 
-      const subtotal = product.price - discountAmount;
-
-      // Update the product with the subtotal
-      await ProductModel.findByIdAndUpdate(
-        product._id,
-        { subtotal },
-        { new: true }
-      );
+    if (categoryIds.length === 0 || brandIds.length === 0) {
+      res.status(400).json({
+        message: "Please seed categories and brands before seeding products.",
+      });
+      return;
     }
 
-    res.status(200).json({
-      message: "All products have been updated with subtotals!",
+    // Seed products
+
+    await ProductModel.insertMany(products);
+    console.log("Products seeded successfully!");
+
+    res.status(201).json({
+      message: "Products seeded successfully!",
+      data: {
+        categoryIds,
+        brandIds,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+// export const seedProducts = async (
+//   req: Request,
+//   res: Response
+// ): Promise<void> => {
+//   try {
+//     // Fetch all products
+//     const products = await ProductModel.find();
+
+//     // Update each product with the subtotal
+//     for (const product of products) {
+//       const discountAmount =
+//         product.discount_type === "percentage"
+//           ? (product.price * product.discount_amount) / 100
+//           : product.discount_amount;
+
+//       const subtotal = product.price - discountAmount;
+
+//       // Update the product with the subtotal
+//       await ProductModel.findByIdAndUpdate(
+//         product._id,
+//         { subtotal },
+//         { new: true }
+//       );
+//     }
+
+//     res.status(200).json({
+//       message: "All products have been updated with subtotals!",
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };

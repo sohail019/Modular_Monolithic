@@ -31,15 +31,16 @@ export const getUserDetailsAndOrders = async (userId: string) => {
     }
 
     // Fetch orders of the user from the order module
-    // const orders = await orderService.getOrdersByUserId(userId, {
-    //   page: 1,
-    //   limit: 10, // Default pagination
-    //   sort: "-created_at", // Sort by most recent orders
-    // });
+    const orders = await orderService.getOrdersByUserId(userId, {
+      page: 1,
+      limit: 10, // Default pagination
+      sort: "-created_at", // Sort by most recent orders
+    });
+    // console.log("orders", orders);
 
     return {
       user,
-      // orders,
+      ...orders,
     };
   } catch (error) {
     throw new Error(`Error fetching user details and orders: ${error.message}`);

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as orderController from "./order.controller";
 import { authenticate } from "../../middleware/auth.middleware";
-
+import { seedOrders } from "./order.service";
 const router = Router();
 
 // All order routes require authentication
@@ -55,4 +55,14 @@ router.get(
   authenticate,
   orderController.getOrderDetailsWithShippingAddressController
 );
+
+router.post("/seed-orders", async (req, res) => {
+  try {
+    const { count } = req.body; // Number of orders to seed
+    await seedOrders(count || 10);
+    res.status(201).json({ message: "Orders seeded successfully!" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 export default router;
