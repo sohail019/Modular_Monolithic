@@ -9,7 +9,8 @@ import {
 } from "./order.types";
 import * as cartService from "../cart/cart.service";
 import * as productService from "../product/product.service";
-
+import Product from "../product/product.schema";
+import User from "../user/user.schema";
 // Create a new order
 export const createOrder = async (orderData: CreateOrderDto): Promise<any> => {
   let items = [];
@@ -689,3 +690,108 @@ function formatOrderItemResponse(item: any) {
     status: item.status,
   };
 }
+
+export const seedOrders = async (
+  numberOfOrders: number = 10
+): Promise<void> => {
+  try {
+    console.log("Seeding orders...");
+
+    // Fetch all users and products
+    const users = await User.find().lean();
+    const products = await Product.find().lean();
+
+    if (users.length === 0 || products.length === 0) {
+      throw new Error(
+        "Please ensure there are users and products in the database before seeding orders."
+      );
+    }
+
+    const orders = [];
+
+    for (let i = 0; i < numberOfOrders; i++) {
+      // Randomly select a user
+      const user = users[Math.floor(Math.random() * users.length)];
+
+      // Randomly select products for the order
+      const numberOfItems = Math.floor(Math.random() * 5) + 1; // 1 to 5 items per order
+      const selectedProducts = [];
+      for (let j = 0; j < numberOfItems; j++) {
+        const product = products[Math.floor(Math.random() * products.length)];
+        selectedProducts.push(product);
+      }
+
+      // Generate order items
+      const orderItems = selectedProducts.map((product) => {
+        const quantity = Math.floor(Math.random() * 5) + 1; // 1 to 5 units per item
+        const itemTotal = product.price * quantity;
+        const discount =
+          product.discount_type === "percentage"
+            ? (itemTotal * product.discount_amount) / 100
+            : product.discount_amount;
+        const gstAmount = product.price * 0.18 * quantity; // Assuming 18% GST
+
+        return {
+          product_id: product._id,
+          product_name: product.name,
+          quantity,
+          unit_price: product.price,
+          discount_amount: discount,
+          discount_type: product.discount_type,
+          gst_amount: gstAmount,
+          subtotal: itemTotal - discount + gstAmount,
+        };
+      });
+
+      // Calculate order totals
+      const totalAmount = orderItems.reduce(
+        (sum, item) => sum + item.subtotal,
+        0
+      );
+      const gstAmount = orderItems.reduce(
+        (sum, item) => sum + item.gst_amount,
+        0
+      );
+      const discountAmount = orderItems.reduce(
+        (sum, item) => sum + item.discount_amount,
+        0
+      );
+      const finalAmount = totalAmount;
+
+      // Create the order
+      const order = new Order({
+        user_id: user._id,
+        status: "pending",
+        total_amount: totalAmount,
+        discount_amount: discountAmount,
+        discount_type: "fixed",
+        gst_amount: gstAmount,
+        final_amount: finalAmount,
+        currency: "USD",
+        status_log: [
+          {
+            status: "pending",
+            timestamp: new Date(),
+            comment: "Order created",
+          },
+        ],
+      });
+
+      // Save the order to the database
+      const savedOrder = await order.save();
+
+      // Create and save order items
+      const orderItemsWithOrderId = orderItems.map((item) => ({
+        ...item,
+        order_id: savedOrder._id,
+      }));
+      await OrderItem.insertMany(orderItemsWithOrderId);
+
+      orders.push(savedOrder);
+    }
+
+    console.log(`${orders.length} orders seeded successfully!`);
+  } catch (error) {
+    console.error("Error seeding orders:", error.message);
+  }
+};
