@@ -6,6 +6,7 @@ const router = Router();
 
 // Public routes - only webhook doesn't require authentication
 router.post("/webhook", paymentController.handleWebhook);
+router.post("/seed", paymentController.seedPaymentsController);
 
 // All other routes require authentication
 router.use(authenticate);
