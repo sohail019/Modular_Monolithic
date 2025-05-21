@@ -8,6 +8,8 @@ import {
 } from "./payment.types";
 import * as orderService from "../order/order.service";
 import { createLogger } from "../../utils/logger";
+import { Order } from "../order/order.schema";
+import { faker } from "@faker-js/faker";
 
 const logger = createLogger("PaymentService");
 
@@ -451,4 +453,61 @@ function formatPaymentResponse(payment: any) {
 
 export const getPaymentsByOrderIds = async (orderIds: string[]) => {
   return await Payment.find({ order_id: { $in: orderIds } });
+};
+
+// Seed payments for all orders
+export const seedPayments = async () => {
+  try {
+    const orders = await Order.find().lean();
+    if (!orders.length) {
+      console.log("No orders found to seed payments for.");
+      return;
+    }
+    const payments = orders.map((order) => {
+      const method = faker.helpers.arrayElement([
+        "credit_card",
+        "debit_card",
+        "upi",
+        "net_banking",
+        "wallet",
+        "cash_on_delivery",
+        "other",
+      ]);
+      const gateway = faker.helpers.arrayElement([
+        "razorpay",
+        "stripe",
+        "paypal",
+        "paytm",
+        "manual",
+        "other",
+      ]);
+      const status = faker.helpers.arrayElement([
+        "pending",
+        "processing",
+        "completed",
+        "failed",
+        "refunded",
+        "partially_refunded",
+        "cancelled",
+      ]);
+      return {
+        order_id: order._id,
+        user_id: order.user_id,
+        amount_paid: order.final_amount,
+        method,
+        payment_type: "full",
+        gateway,
+        payment_ref: faker.string.uuid(),
+        status,
+        gst_number: order.gst_number || "",
+        gst_amount: order.gst_amount || 0,
+        metadata: {},
+        refund_details: [],
+      };
+    });
+    await Payment.insertMany(payments);
+    console.log(`${payments.length} payments seeded for orders!`);
+  } catch (error) {
+    console.error("Error seeding payments:", error.message);
+  }
 };

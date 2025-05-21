@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 
 import * as userService from "../modules/user/user.service";
 import * as orderService from "../modules/order/order.service";
+import * as paymentService from "../modules/payment/payment.service";
 
 /**
  * Add a new user to the database.
@@ -36,11 +37,32 @@ export const getUserDetailsAndOrders = async (userId: string) => {
       limit: 10, // Default pagination
       sort: "-created_at", // Sort by most recent orders
     });
-    // console.log("orders", orders);
+
+    // Extract all order IDs
+    const orderIds = orders.orders.map((order) => order.id);
+
+    // Fetch all payments for the orders in a single query
+    const payments = await paymentService.getPaymentsByOrderIds(orderIds);
+
+    // Map payments to their corresponding orders
+    const paymentMap = payments.reduce((map, payment) => {
+      map[payment.order_id.toString()] = payment;
+      return map;
+    }, {} as Record<string, any>);
+
+    // Attach payment details to each order
+    const ordersWithPayments = orders.orders.map((order) => ({
+      ...order,
+      payment: paymentMap[order.id] || null, // Attach payment or null if not found
+    }));
 
     return {
       user,
-      ...orders,
+      orders: ordersWithPayments,
+      total: orders.total,
+      page: orders.page,
+      limit: orders.limit,
+      pages: orders.pages,
     };
   } catch (error) {
     throw new Error(`Error fetching user details and orders: ${error.message}`);

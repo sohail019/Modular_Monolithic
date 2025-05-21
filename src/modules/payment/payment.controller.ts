@@ -16,14 +16,11 @@ export const initiatePayment = async (
 ): Promise<void> => {
   try {
     const userId = req.user?.id;
-    
 
     if (!userId) {
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
-
-
 
     const paymentData: InitiatePaymentDto = req.body;
     console.log("Payment Data:", paymentData);
@@ -264,6 +261,20 @@ export const getMyPayments = async (
     res.status(200).json(payments);
   } catch (error) {
     logger.error(`Error getting user payments: ${error.message}`, { error });
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const seedPaymentsController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    console.log("Seeding payments...");
+    await paymentService.seedPayments();
+    res.status(201).json({ message: "Payments seeded for all orders!" });
+  } catch (error) {
+    logger.error(`Error seeding payments: ${error.message}`, { error });
     res.status(500).json({ message: error.message });
   }
 };

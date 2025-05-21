@@ -9,7 +9,7 @@ import {
 import ProductModel from "./product.schema";
 import { CategoryModel } from "./category/category.schema";
 import { BrandModel } from "./brand/brand.schema";
-
+import { faker } from "@faker-js/faker";
 // Create a new product
 export const createProduct = async (
   req: Request,
@@ -270,13 +270,11 @@ export const seedProducts = async (
   res: Response
 ): Promise<void> => {
   try {
-    // Fetch category IDs
+    // Fetch category and brand IDs
     const categories = await CategoryModel.find({}, "_id").lean();
-    const categoryIds = categories.map((category) => category._id);
-
-    // Fetch brand IDs
     const brands = await BrandModel.find({}, "_id").lean();
-    const brandIds = brands.map((brand) => brand._id);
+    const categoryIds = categories.map((c) => c._id);
+    const brandIds = brands.map((b) => b._id);
 
     if (categoryIds.length === 0 || brandIds.length === 0) {
       res.status(400).json({
@@ -285,17 +283,39 @@ export const seedProducts = async (
       return;
     }
 
-    // Seed products
+    // Generate 1000 unique products
+    const slugs = new Set<string>();
+    const fakeProducts = [];
 
-    await ProductModel.insertMany(products);
-    console.log("Products seeded successfully!");
+    while (fakeProducts.length < 1000) {
+      const name = faker.commerce.productName();
+      let slug = faker.helpers.slugify(name).toLowerCase();
+
+      // Ensure slug is unique
+      let suffix = 1;
+      let uniqueSlug = slug;
+      while (slugs.has(uniqueSlug)) {
+        uniqueSlug = `${slug}-${suffix++}`;
+      }
+      slugs.add(uniqueSlug);
+
+      fakeProducts.push({
+        name,
+        slug: uniqueSlug,
+        description: faker.commerce.productDescription(),
+        price: parseFloat(faker.commerce.price({ min: 10, max: 1000 })),
+        category_id: faker.helpers.arrayElement(categoryIds),
+        brand_id: faker.helpers.arrayElement(brandIds),
+        stock: faker.number.int({ min: 0, max: 100 }),
+        images: [faker.image.url()],
+        // Add other fields as needed
+      });
+    }
+
+    await ProductModel.insertMany(fakeProducts);
 
     res.status(201).json({
-      message: "Products seeded successfully!",
-      data: {
-        categoryIds,
-        brandIds,
-      },
+      message: "1000 products seeded successfully!",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
